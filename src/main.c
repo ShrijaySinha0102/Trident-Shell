@@ -6,6 +6,8 @@
 #include "parser.h"
 #include "executor.h"
 #include "signals.h"
+#include "jobs.h"
+#include <sys/wait.h>
 #include <unistd.h>
 
 /* REPL skeleton. Currently every line is a "not implemented" stub. */
@@ -61,5 +63,5 @@ int main(void) {
         tokenlist_free(&toks);
     }
     free(line);
-    return 0;
+    return g_last_status;
 }
