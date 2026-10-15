@@ -1,0 +1,1 @@
+echo x | false, then echo $?, then false | echo ok, then echo $?

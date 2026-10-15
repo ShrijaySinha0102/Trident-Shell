@@ -1,0 +1,1 @@
+echo hi | cat > pipe_redir_out.txt, then cat pipe_redir_out.txt, then rm pipe_redir_out.txt, then printf "b\na\n" > pipe_redir_in.txt, then cat < pipe_redir_in.txt | sort, then rm pipe_redir_in.txt
