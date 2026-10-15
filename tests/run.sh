@@ -17,7 +17,7 @@ for f in tests/cases/*.sh; do
     
     # Run nsh
     # we need to redirect stderr to null to not mess up stdout diff
-    got=$($NSH_CMD < "$f" 2>/dev/null)
+    got=$(cat "$f" | $NSH_CMD 2>/dev/null)
     nsh_exit=$?
     
     # Check overrides
