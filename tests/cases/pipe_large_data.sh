@@ -1,1 +1,2 @@
-seq 1 100000 | wc -l, then yes | head -n 3
+seq 1 100000 | wc -l
+yes | head -n 3

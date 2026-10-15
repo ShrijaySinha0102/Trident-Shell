@@ -1,1 +1,4 @@
-echo x | false, then echo $?, then false | echo ok, then echo $?
+echo x | false
+echo $?
+false | echo ok
+echo $?

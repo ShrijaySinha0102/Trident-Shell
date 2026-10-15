@@ -1,0 +1,1 @@
+seq 1 5 | cat | cat | cat | wc -l
