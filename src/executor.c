@@ -116,6 +116,8 @@ static int execute_pipeline(Pipeline *p) {
         }
         if (pid == 0) {
             setpgid(0, pgid);                       /* pgid 0 => new group */
+            if (!p->background && isatty(STDIN_FILENO))   /* also in child: closes the */
+                tcsetpgrp(STDIN_FILENO, pgid ? pgid : getpid()); /* tty race */
             if (prev_read >= 0 && dup2(prev_read, 0) < 0) _exit(1);
             if (fd[1] >= 0 && dup2(fd[1], 1) < 0) _exit(1);
             /* After dup2 the originals are duplicates: close them all, or

@@ -54,11 +54,13 @@ int main(void) {
 
         TokenList toks;
         Pipeline  pl;
-        if (lex(line, &toks) < 0) { continue; }
+        if (lex(line, &toks) < 0) { g_last_status = 2; continue; }
         if (expand_tokens(&toks) == 0 && parse(&toks, &pl) == 0) {
             pl.raw = strdup(line);
             g_last_status = execute(&pl);
             pipeline_free(&pl);
+        } else {
+            g_last_status = 2;   /* syntax error: same status as bash */
         }
         tokenlist_free(&toks);
     }
