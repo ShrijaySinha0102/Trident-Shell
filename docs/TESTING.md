@@ -41,3 +41,11 @@ Run each 10 times, report median and spread, record machine/kernel info.
 
 ## Definition of done
 A feature is done when it has tests in this matrix, passes Valgrind, and leaves no extra fds or zombies.
+
+## Person 2 additions (pipes, redirection, hardening)
+| Check | How to run | What it proves |
+|---|---|---|
+| Pipe / redirection / syntax-error cases | `make test` | stdout and exit status match bash (`pipe_*`, `redir_*`, `syntax_*`) |
+| Fd-leak and zombie check | `bash tests/leak_check.sh` | 50 rounds of pipelines leave nsh's fd count unchanged and no zombies |
+| Pipeline signals (pty) | `python3 tests/interactive/pipeline_signals.py` | Ctrl+C kills and Ctrl+Z stops EVERY stage; shell survives. `fg` resume is reported as SKIP until Person 3 implements it |
+| Valgrind | `make valgrind` | no leaks in the shell process |
