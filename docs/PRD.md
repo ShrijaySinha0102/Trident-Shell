@@ -38,13 +38,13 @@ Command history with arrow keys, tab completion, basic globbing, `.nshrc`.
 - Benchmark report with at least 2 experiments and charts.
 
 ## 7. Deliverables
-- [ ] Design docs (this folder), committed in week 1
-- [ ] Tokenizer + parser with tests
-- [ ] Executor, built-ins, `$VAR` expansion
-- [ ] Redirection and multi-stage pipes
-- [ ] Job control + signal handling
-- [ ] Observability (`trace`, `stats`)
-- [ ] Test suite (bash comparison)
-- [ ] Benchmark scripts + results
-- [ ] README with build/run + demo recording (asciinema/GIF)
-- [ ] Project report with per-member contributions
+- [x] Design docs (this folder), committed in week 1
+- [x] Tokenizer + parser with tests
+- [x] Executor, built-ins, `$VAR` expansion
+- [x] Redirection and multi-stage pipes
+- [x] Job control + signal handling
+- [x] Observability (`trace`, `stats`)
+- [x] Test suite (bash comparison)
+- [x] Benchmark scripts + results
+- [x] README with build/run + demo recording (asciinema/GIF)
+- [x] Project report with per-member contributions

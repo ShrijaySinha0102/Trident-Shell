@@ -25,9 +25,9 @@ Work is organized by **phase**, not by calendar. A phase is finished only when i
 - **P3:** read `SIGNALS_AND_JOBS.md`; understand process groups before coding.
 
 **Exit criteria**
-- [ ] Repo created, branch rules agreed, CI green on stubs
-- [ ] `ARCHITECTURE.md` interfaces signed off by all three
-- [ ] Each person can build and run `./nsh`
+- [x] Repo created, branch rules agreed, CI green on stubs
+- [x] `ARCHITECTURE.md` interfaces signed off by all three
+- [x] Each person can build and run `./nsh`
 
 ## Phase 2 — Core Execution
 **Goal:** the shell reads a line and runs a real program.
@@ -36,9 +36,9 @@ Work is organized by **phase**, not by calendar. A phase is finished only when i
 - **P3:** throwaway spike: `setpgid`, `tcsetpgrp`, shell ignores SIGINT/SIGTSTP.
 
 **Exit criteria**
-- [ ] `ls`, `pwd`, `echo hi` run correctly; unknown command gives exit 127
-- [ ] Ctrl+C at the prompt does not kill the shell
-- [ ] Test harness runs and reports pass/fail
+- [x] `ls`, `pwd`, `echo hi` run correctly; unknown command gives exit 127
+- [x] Ctrl+C at the prompt does not kill the shell
+- [x] Test harness runs and reports pass/fail
 
 ## Phase 3 — Built-ins, Redirection, Background Launch
 **Goal:** a practically usable single-command shell.
@@ -47,9 +47,9 @@ Work is organized by **phase**, not by calendar. A phase is finished only when i
 - **P3:** job table, `&` launches a background job, SIGCHLD reaping.
 
 **Exit criteria**
-- [ ] Built-ins and expansion pass their tests
-- [ ] All three redirection operators pass, including error cases (missing file)
-- [ ] `sleep 1 &` returns to the prompt immediately and leaves no zombie
+- [x] Built-ins and expansion pass their tests
+- [x] All three redirection operators pass, including error cases (missing file)
+- [x] `sleep 1 &` returns to the prompt immediately and leaves no zombie
 
 ## Phase 4 — Pipes & Job Commands
 **Goal:** the two largest features each work on their own.
@@ -58,9 +58,9 @@ Work is organized by **phase**, not by calendar. A phase is finished only when i
 - **P1:** `trace` mode with hooks in executor and job manager.
 
 **Exit criteria**
-- [ ] `a | b | c` works, including `yes | head` (SIGPIPE) and large data
-- [ ] `jobs` lists correct states; `fg`/`bg` resume the right job
-- [ ] `trace on` prints fork/exec/setpgid events
+- [x] `a | b | c` works, including `yes | head` (SIGPIPE) and large data
+- [x] `jobs` lists correct states; `fg`/`bg` resume the right job
+- [x] `trace on` prints fork/exec/setpgid events
 
 ## Phase 5 — Integration & Signals
 **Goal:** pipelines, redirection, background jobs and signals all combine correctly.
@@ -69,10 +69,10 @@ Work is organized by **phase**, not by calendar. A phase is finished only when i
 - **P1:** `stats` command using `wait4` rusage.
 
 **Exit criteria**
-- [ ] `cat f | sort > out &` works
-- [ ] Ctrl+Z on a pipeline stops all its stages; `fg` resumes them
-- [ ] Ctrl+C kills only the foreground job; shell keeps running
-- [ ] `stats` shows wall/user/sys time and max RSS per job
+- [x] `cat f | sort > out &` works
+- [x] Ctrl+Z on a pipeline stops all its stages; `fg` resumes them
+- [x] Ctrl+C kills only the foreground job; shell keeps running
+- [x] `stats` shows wall/user/sys time and max RSS per job
 
 ## Phase 6 — Hardening (risk buffer)
 **Goal:** fix the subtle bugs. This is the highest-risk phase; process groups and terminal control are the hardest parts.
@@ -81,9 +81,9 @@ Work is organized by **phase**, not by calendar. A phase is finished only when i
 - Use spare time here to absorb slips from earlier phases.
 
 **Exit criteria**
-- [ ] `make valgrind` clean
-- [ ] No leaked fds, no zombies after stress tests (50 background jobs)
-- [ ] Interactive (pty) tests pass for Ctrl+C, Ctrl+Z, fg, bg
+- [x] `make valgrind` clean
+- [x] No leaked fds, no zombies after stress tests (50 background jobs)
+- [x] Interactive (pty) tests pass for Ctrl+C, Ctrl+Z, fg, bg
 
 ## Phase 7 — Edge Cases & Benchmarks
 **Goal:** behaviour matches bash on awkward input; performance is measured.
@@ -91,8 +91,8 @@ Work is organized by **phase**, not by calendar. A phase is finished only when i
 - **P1:** run benchmark experiments (spawn latency, pipeline throughput, job overhead, trace overhead) against bash and dash; produce charts.
 
 **Exit criteria**
-- [ ] Every row of the `TESTING.md` matrix passes
-- [ ] At least two benchmark experiments completed with charts and recorded system info
+- [x] Every row of the `TESTING.md` matrix passes
+- [x] At least two benchmark experiments completed with charts and recorded system info
 
 ## Phase 8 — Documentation & Delivery
 **Goal:** everything needed for submission.
@@ -100,8 +100,8 @@ Work is organized by **phase**, not by calendar. A phase is finished only when i
 - Final cleanup: remove dead code, tidy commit history, tag a release.
 
 **Exit criteria**
-- [ ] All items in the `PRD.md` deliverables checklist ticked
-- [ ] Report and demo reviewed by all three members
+- [x] All items in the `PRD.md` deliverables checklist ticked
+- [x] Report and demo reviewed by all three members
 
 ---
 
