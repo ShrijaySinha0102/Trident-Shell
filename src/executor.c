@@ -2,6 +2,7 @@
 #include "signals.h"
 #include "builtins.h"
 #include "jobs.h"
+#include "trace.h"
 #include <unistd.h>
 #include <sys/wait.h>
 #include <stdlib.h>
@@ -56,6 +57,7 @@ static void run_stage(Command *cmd) {
     signals_reset_child();
     if (apply_redirections(cmd) < 0) _exit(1);
     if (!cmd->argv[0]) _exit(0);
+    trace_event("exec %s", cmd->argv[0]);
     if (is_builtin(cmd->argv[0])) {
         int st = run_builtin(cmd);
         fflush(NULL);
@@ -64,34 +66,6 @@ static void run_stage(Command *cmd) {
     execvp(cmd->argv[0], cmd->argv);
     fprintf(stderr, "nsh: %s: command not found\n", cmd->argv[0]);
     _exit(127);
-}
-
-/* Wait for EVERY stage so no zombies remain; the pipeline's status is the
- * status of the LAST stage. */
-static int wait_foreground(Job *j) {
-    int tty = isatty(STDIN_FILENO);
-    size_t n = j->npids;
-    int last = 0, stopped = 0;
-    if (tty) tcsetpgrp(STDIN_FILENO, j->pgid);
-    for (size_t k = 0; k < n; k++) {
-        int st;
-        pid_t r;
-        do { r = waitpid(j->pids[k], &st, WUNTRACED); } while (r < 0 && errno == EINTR);
-        if (r < 0) continue;
-        if (WIFSTOPPED(st)) { stopped = 1; last = 128 + WSTOPSIG(st); }
-        else if (k == n - 1)
-            last = WIFEXITED(st) ? WEXITSTATUS(st) : 128 + WTERMSIG(st);
-    }
-    if (tty) tcsetpgrp(STDIN_FILENO, getpgrp());
-    g_last_status = last;
-    if (stopped) {
-        j->state = JOB_STOPPED;
-        j->background = 1;
-        fprintf(stderr, "\n[%d] Stopped                 %s\n", j->id, j->cmdline);
-    } else {
-        job_remove(j);
-    }
-    return last;
 }
 
 /* N commands -> N-1 pipes -> N children in ONE process group. */
@@ -106,7 +80,10 @@ static int execute_pipeline(Pipeline *p) {
     fflush(NULL);           /* avoid children re-printing buffered output */
     for (size_t i = 0; i < n; i++) {
         int fd[2] = {-1, -1};
-        if (i < n - 1 && pipe(fd) < 0) { perror("nsh: pipe"); failed = 1; break; }
+        if (i < n - 1) {
+            if (pipe(fd) < 0) { perror("nsh: pipe"); failed = 1; break; }
+            trace_event("pipe [%d, %d]", fd[0], fd[1]);
+        }
         pid_t pid = fork();
         if (pid < 0) {
             perror("nsh: fork");
@@ -129,6 +106,8 @@ static int execute_pipeline(Pipeline *p) {
         }
         if (i == 0) pgid = pid;
         setpgid(pid, pgid);                         /* both sides: avoids race */
+        trace_event("fork pid=%d", (int)pid);
+        trace_event("setpgid pid=%d pgid=%d", (int)pid, (int)pgid);
         pids[started++] = pid;
         if (prev_read >= 0) close(prev_read);
         if (fd[1] >= 0) close(fd[1]);
@@ -150,7 +129,7 @@ static int execute_pipeline(Pipeline *p) {
         fprintf(stderr, "[%d] %d\n", j->id, (int)pgid);
         return 0;
     }
-    return wait_foreground(j);
+    return job_put_fg(j, 0);
 }
 
 int execute(Pipeline *p) {
@@ -160,7 +139,7 @@ int execute(Pipeline *p) {
         Command *cmd = &p->cmds[0];
         if (!cmd->argv || !cmd->argv[0]) return 0;
 
-        if (is_builtin(cmd->argv[0])) {
+        if (is_builtin(cmd->argv[0]) && !p->background) {
             int saved_in = dup(0);
             int saved_out = dup(1);
             if (apply_redirections(cmd) < 0) {
@@ -183,11 +162,18 @@ int execute(Pipeline *p) {
         } else if (pid == 0) {
             // Child
             signals_reset_child();
-            if (p->background) {
-                setpgid(0, 0);
+            setpgid(0, 0);
+            if (!p->background && isatty(STDIN_FILENO)) {
+                tcsetpgrp(STDIN_FILENO, getpid());
             }
             if (apply_redirections(cmd) < 0) {
                 _exit(1);
+            }
+            trace_event("exec %s", cmd->argv[0]);
+            if (is_builtin(cmd->argv[0])) {
+                int st = run_builtin(cmd);
+                fflush(NULL);
+                _exit(st);
             }
             execvp(cmd->argv[0], cmd->argv);
             fprintf(stderr, "nsh: %s: command not found\n", cmd->argv[0]);
@@ -195,6 +181,8 @@ int execute(Pipeline *p) {
         } else {
             // Parent
             setpgid(pid, pid);
+            trace_event("fork pid=%d", (int)pid);
+            trace_event("setpgid pid=%d pgid=%d", (int)pid, (int)pid);
             if (p->background) {
                 Job *j = job_add(pid, &pid, 1, p->raw ? p->raw : cmd->argv[0], 1);
                 if (j) fprintf(stderr, "[%d] %d\n", j->id, pid);

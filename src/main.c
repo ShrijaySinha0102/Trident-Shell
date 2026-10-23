@@ -1,3 +1,4 @@
+#define _DEFAULT_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -7,10 +8,12 @@
 #include "executor.h"
 #include "signals.h"
 #include "jobs.h"
+#include "trace.h"
+#include "stats.h"
 #include <sys/wait.h>
+#include <sys/resource.h>
 #include <unistd.h>
 
-/* REPL skeleton. Currently every line is a "not implemented" stub. */
 int main(void) {
     char *line = NULL;
     size_t cap = 0;
@@ -27,16 +30,26 @@ int main(void) {
             g_sigchld_pending = 0;
             int status;
             pid_t p;
-            while ((p = waitpid(-1, &status, WNOHANG | WUNTRACED)) > 0) {
-                Job *j = job_find_by_pgid(p);
+            struct rusage ru;
+            while ((p = wait4(-1, &status, WNOHANG | WUNTRACED, &ru)) > 0) {
+                Job *j = job_find_by_pid(p);
                 if (!j) continue;
-                if (WIFEXITED(status) || WIFSIGNALED(status)) {
-                    j->state = JOB_DONE;
-                    fprintf(stderr, "[%d] Done                    %s\n", j->id, j->cmdline);
-                    job_remove(j);
-                } else if (WIFSTOPPED(status)) {
+                stats_record(p, &ru, 0.0);
+                trace_event("wait4 pid=%d status=%d", (int)p, status);
+                if (WIFSTOPPED(status)) {
                     j->state = JOB_STOPPED;
                     fprintf(stderr, "\n[%d] Stopped                 %s\n", j->id, j->cmdline);
+                } else if (WIFEXITED(status) || WIFSIGNALED(status)) {
+                    size_t remaining = 0;
+                    for (size_t k = 0; k < j->npids; k++) {
+                        if (j->pids[k] == p) j->pids[k] = 0;
+                        if (j->pids[k] != 0) remaining++;
+                    }
+                    if (remaining == 0) {
+                        j->state = JOB_DONE;
+                        fprintf(stderr, "[%d] Done                    %s\n", j->id, j->cmdline);
+                        job_remove(j);
+                    }
                 }
             }
         }

@@ -9,23 +9,37 @@ static void sigchld_handler(int sig) {
     g_sigchld_pending = 1;
 }
 
-void signals_init(void) {
+static void set_handler(int sig, void (*handler)(int), int flags) {
     struct sigaction sa;
-    sa.sa_handler = sigchld_handler;
+    sa.sa_handler = handler;
     sigemptyset(&sa.sa_mask);
-    sa.sa_flags = SA_RESTART;
-    sigaction(SIGCHLD, &sa, NULL);
+    sa.sa_flags = flags;
+    sigaction(sig, &sa, NULL);
+}
 
-    signal(SIGINT, SIG_IGN);
-    signal(SIGTSTP, SIG_IGN);
-    signal(SIGTTOU, SIG_IGN);
-    signal(SIGTTIN, SIG_IGN);
+void signals_init(void) {
+    set_handler(SIGCHLD, sigchld_handler, SA_RESTART);
+    set_handler(SIGINT, SIG_IGN, 0);
+    set_handler(SIGTSTP, SIG_IGN, 0);
+    set_handler(SIGTTOU, SIG_IGN, 0);
+    set_handler(SIGTTIN, SIG_IGN, 0);
 }
 
 void signals_reset_child(void) {
-    signal(SIGINT, SIG_DFL);
-    signal(SIGTSTP, SIG_DFL);
-    signal(SIGTTOU, SIG_DFL);
-    signal(SIGTTIN, SIG_DFL);
-    signal(SIGCHLD, SIG_DFL);
+    set_handler(SIGINT, SIG_DFL, 0);
+    set_handler(SIGTSTP, SIG_DFL, 0);
+    set_handler(SIGTTOU, SIG_DFL, 0);
+    set_handler(SIGTTIN, SIG_DFL, 0);
+    set_handler(SIGCHLD, SIG_DFL, 0);
+}
+
+void signals_block_chld(sigset_t *prev) {
+    sigset_t mask;
+    sigemptyset(&mask);
+    sigaddset(&mask, SIGCHLD);
+    sigprocmask(SIG_BLOCK, &mask, prev);
+}
+
+void signals_unblock_chld(const sigset_t *prev) {
+    sigprocmask(SIG_SETMASK, prev, NULL);
 }

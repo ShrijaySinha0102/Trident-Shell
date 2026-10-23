@@ -16,6 +16,7 @@ typedef struct {
 Job *job_add(pid_t pgid, pid_t *pids, size_t n, const char *cmd, int bg);
 Job *job_find_by_id(int id);
 Job *job_find_by_pgid(pid_t pgid);
+Job *job_find_by_pid(pid_t pid);
 void job_remove(Job *j);
 void jobs_print(void);
 int  job_put_fg(Job *j, int cont);

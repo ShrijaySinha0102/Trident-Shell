@@ -49,6 +49,29 @@ static char *expand_string(const char *str) {
                 len += blen;
                 p++;
                 continue;
+            } else if (*p == '{') {
+                p++;
+                const char *start = p;
+                while (*p && *p != '}') p++;
+                if (*p == '}') {
+                    char *vname = xmalloc(p - start + 1);
+                    memcpy(vname, start, p - start);
+                    vname[p - start] = '\0';
+                    char *val = getenv(vname);
+                    free(vname);
+                    if (val) {
+                        size_t vlen = strlen(val);
+                        if (len + vlen >= cap) { cap = (len + vlen) * 2; res = xrealloc(res, cap); }
+                        memcpy(res + len, val, vlen);
+                        len += vlen;
+                    }
+                    p++;
+                } else {
+                    if (len + 2 >= cap) { cap *= 2; res = xrealloc(res, cap); }
+                    res[len++] = '$';
+                    res[len++] = '{';
+                }
+                continue;
             } else {
                 const char *start = p;
                 while ((*p >= 'A' && *p <= 'Z') || (*p >= 'a' && *p <= 'z') || (*p >= '0' && *p <= '9') || *p == '_') p++;
