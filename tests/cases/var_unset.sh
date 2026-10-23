@@ -1,0 +1,1 @@
+echo "val=${NSH_NONEXISTENT_VAR_12345}"
