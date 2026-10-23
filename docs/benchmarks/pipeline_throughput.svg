@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360">
+<rect width="100%" height="100%" fill="#121820" rx="12"/>
+<text x="50%" y="45" font-family="system-ui, sans-serif" font-size="20" font-weight="bold" fill="#ECEFF4" text-anchor="middle">Pipeline Throughput (1M integers)</text>
+<text x="50%" y="68" font-family="system-ui, sans-serif" font-size="12" fill="#8892B0" text-anchor="middle">Execution Time vs Stage Count (Lower is Better)</text>
+<line x1="80" y1="280" x2="580" y2="280" stroke="#2E3440" stroke-width="2"/>
+<line x1="80" y1="80" x2="80" y2="280" stroke="#2E3440" stroke-width="2"/>
+<line x1="80" y1="80" x2="80" y2="280" stroke="#1E2430" stroke-dasharray="4,4"/>
+<text x="80" y="304" font-family="system-ui, sans-serif" font-size="13" fill="#8892B0" text-anchor="middle">1 stage</text>
+<line x1="246" y1="80" x2="246" y2="280" stroke="#1E2430" stroke-dasharray="4,4"/>
+<text x="246" y="304" font-family="system-ui, sans-serif" font-size="13" fill="#8892B0" text-anchor="middle">2 stages</text>
+<line x1="413" y1="80" x2="413" y2="280" stroke="#1E2430" stroke-dasharray="4,4"/>
+<text x="413" y="304" font-family="system-ui, sans-serif" font-size="13" fill="#8892B0" text-anchor="middle">4 stages</text>
+<line x1="580" y1="80" x2="580" y2="280" stroke="#1E2430" stroke-dasharray="4,4"/>
+<text x="580" y="304" font-family="system-ui, sans-serif" font-size="13" fill="#8892B0" text-anchor="middle">8 stages</text>
+<polyline fill="none" stroke="#81A1C1" stroke-width="3" points="80,133 246,150 413,140 580,120"/>
+<circle cx="80" cy="133" r="5" fill="#81A1C1"/>
+<circle cx="246" cy="150" r="5" fill="#81A1C1"/>
+<circle cx="413" cy="140" r="5" fill="#81A1C1"/>
+<circle cx="580" cy="120" r="5" fill="#81A1C1"/>
+<polyline fill="none" stroke="#A3BE8C" stroke-width="3" points="80,161 246,180 413,164 580,146"/>
+<circle cx="80" cy="161" r="5" fill="#A3BE8C"/>
+<circle cx="246" cy="180" r="5" fill="#A3BE8C"/>
+<circle cx="413" cy="164" r="5" fill="#A3BE8C"/>
+<circle cx="580" cy="146" r="5" fill="#A3BE8C"/>
+<polyline fill="none" stroke="#88C0D0" stroke-width="3" points="80,139 246,153 413,143 580,123"/>
+<circle cx="80" cy="139" r="5" fill="#88C0D0"/>
+<circle cx="246" cy="153" r="5" fill="#88C0D0"/>
+<circle cx="413" cy="143" r="5" fill="#88C0D0"/>
+<circle cx="580" cy="123" r="5" fill="#88C0D0"/>
+<rect x="400" y="87" width="14" height="4" fill="#81A1C1" rx="2"/>
+<circle cx="407" cy="89" r="3" fill="#81A1C1"/>
+<text x="424" y="93" font-family="system-ui, sans-serif" font-size="12" font-weight="600" fill="#D8DEE9">bash</text>
+<rect x="400" y="107" width="14" height="4" fill="#A3BE8C" rx="2"/>
+<circle cx="407" cy="109" r="3" fill="#A3BE8C"/>
+<text x="424" y="113" font-family="system-ui, sans-serif" font-size="12" font-weight="600" fill="#D8DEE9">dash</text>
+<rect x="400" y="127" width="14" height="4" fill="#88C0D0" rx="2"/>
+<circle cx="407" cy="129" r="3" fill="#88C0D0"/>
+<text x="424" y="133" font-family="system-ui, sans-serif" font-size="12" font-weight="600" fill="#D8DEE9">nsh</text>
+</svg>
